@@ -4,7 +4,7 @@ Turn a USB camera into a simple local document camera and capture desk.
 
 ![PaperCam interface](demo.png)
 
-**[Watch the 17-second demo video](demo.mp4)**
+**[Watch the 17-second demo video](https://raw.githubusercontent.com/w1379/papercam/main/demo.mp4)**
 
 PaperCam runs entirely on your Windows PC. It shows a live camera view, saves photos locally, and keeps recent captures beside the preview.
 
@@ -52,4 +52,3 @@ Available resolutions and refocus support depend on the camera and its driver.
 ## Privacy
 
 PaperCam listens only on `127.0.0.1`. Camera frames and captured images stay on the local computer. The repository excludes captures, generated documents, logs, screenshots, archives, local configuration, and common secret files.
-
