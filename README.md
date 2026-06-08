@@ -1,26 +1,24 @@
 # PaperCam
 
-PaperCam is a small, dependency-free local web application for capturing paper documents with a camera on Windows. It provides a live camera preview, local image storage, a capture gallery, and basic annotation and cropping tools.
+Turn a USB camera into a simple local document camera and capture desk.
 
-## Features
+![PaperCam interface](demo.png)
 
-- Selects an available camera and supports 1080p, 2K, 2592 x 1944, and 3264 x 2448 capture modes
-- Starts in 2K mode with a 1.5x preview zoom
-- Provides a camera refocus control when supported by the device
-- Rotates and zooms the live preview
-- Saves captures as numbered PNG files in a local `captures` directory
-- Displays, downloads, copies, drags, and deletes saved captures
-- Creates edited copies with crop, freehand line, arrow, and text tools
-- Runs entirely on localhost with no external services or runtime dependencies
+**[Watch the 17-second demo video](demo.mp4)**
 
-## Requirements
+PaperCam runs entirely on your Windows PC. It shows a live camera view, saves photos locally, and keeps recent captures beside the preview.
 
-- Windows 11
-- Node.js
-- A Chromium-based browser with camera access
-- A connected camera or document camera
+## What It Does
 
-## Run
+- Live document-camera preview with zoom, rotation, and refocus
+- One-click capture to numbered PNG files
+- Built-in gallery for viewing, downloading, dragging, and deleting images
+- Simple crop, line, arrow, and text tools
+- No cloud service and no external dependencies
+
+## Quick Start
+
+Requirements: Windows 11, Node.js, a Chromium-based browser, and a connected camera.
 
 Double-click:
 
@@ -28,36 +26,30 @@ Double-click:
 start-camera-optimized.cmd
 ```
 
-The launcher starts the local server in the background and opens:
-
-```text
-http://127.0.0.1:5173
-```
-
-Alternatively, start it from a terminal:
+Or run:
 
 ```powershell
 npm start
 ```
 
-The application creates `captures/` automatically. Captured and edited images remain on the local machine and are not tracked by Git.
+Then open [http://127.0.0.1:5173](http://127.0.0.1:5173) and allow camera access.
 
-## Camera Controls
+Captured images are saved in the local `captures/` folder. Use **Close local server** in the app when finished.
 
-- Use the camera selector to switch devices.
-- Click the preview or the capture button to take a photo.
-- Press `1`, `2`, `3`, or `4` while the preview is active to request 1080p, 2K, 2592 x 1944, or 3264 x 2448.
-- Use the refocus button to restart continuous focus on compatible cameras.
-- Use the mouse wheel over the preview to zoom.
-- Middle-drag a zoomed preview to reposition it.
-- Use the rotate buttons to rotate the camera view.
+## Basic Controls
 
-Available resolutions depend on the camera and its driver.
+| Action | Control |
+| --- | --- |
+| Take a photo | Click the preview or **Capture** |
+| Change resolution | Hover over the preview and press `1`, `2`, `3`, or `4` |
+| Zoom | Use the mouse wheel over the preview |
+| Move a zoomed view | Middle-drag the preview |
+| Rotate | Use the left/right rotate buttons |
+| Refocus | Click **Refocus** |
+
+Available resolutions and refocus support depend on the camera and its driver.
 
 ## Privacy
 
-PaperCam binds only to `127.0.0.1`. Camera frames and captured images are processed locally. The repository excludes captures, generated documents, logs, screenshots, archives, local configuration, and common secret files.
+PaperCam listens only on `127.0.0.1`. Camera frames and captured images stay on the local computer. The repository excludes captures, generated documents, logs, screenshots, archives, local configuration, and common secret files.
 
-## Repository Notes
-
-This repository contains a clean source snapshot without the history or private working files from the original development repository.
