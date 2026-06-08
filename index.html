@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Camera Capture Desk</title>
+    <link rel="stylesheet" href="./styles.css?v=20260607-1" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="camera-pane" aria-label="摄像头采集">
+        <div class="topbar">
+          <div class="brand">
+            <span class="brand-mark"></span>
+            <div>
+              <h1>Capture Desk</h1>
+              <p>
+                <span id="statusText">正在准备摄像头</span>
+                <span class="dot-separator">/</span>
+                <span id="resolutionText">--</span>
+              </p>
+            </div>
+          </div>
+          <div class="toolbar">
+            <select id="cameraSelect" aria-label="选择摄像头"></select>
+            <button id="rotateLeftButton" type="button" title="向左旋转 90 度">左转</button>
+            <button id="rotateRightButton" type="button" title="向右旋转 90 度">右转</button>
+            <button id="startButton" type="button">启动</button>
+            <button id="captureButton" type="button" class="primary">拍照</button>
+          </div>
+        </div>
+
+        <button id="videoButton" type="button" class="video-stage" aria-label="点击拍照；悬停时按 1、2、3 切换分辨率">
+          <video id="video" autoplay playsinline muted></video>
+          <span id="zoomIndicator" class="zoom-indicator">1.0×</span>
+          <div id="cameraOverlay" class="camera-overlay">
+            <strong>等待摄像头权限</strong>
+            <span>允许后会显示实时画面</span>
+          </div>
+        </button>
+      </section>
+
+      <div id="paneSplitter" class="pane-splitter" role="separator" aria-label="调整左右面板宽度"></div>
+
+      <aside class="gallery-pane" aria-label="图片列表">
+        <div class="gallery-header">
+          <div>
+            <h2>Captures</h2>
+            <p id="latestText">尚无图片</p>
+          </div>
+          <div class="gallery-tools">
+            <div class="segmented" aria-label="预览列数">
+              <button type="button" data-columns="1">1</button>
+              <button type="button" data-columns="2" class="is-active">2</button>
+              <button type="button" data-columns="3">3</button>
+              <button type="button" data-columns="4">4</button>
+            </div>
+            <button id="deleteModeButton" type="button">删除</button>
+            <button id="shutdownButton" type="button" class="shutdown-button">关闭本地服务</button>
+          </div>
+          <div id="deleteActions" class="delete-actions" hidden>
+            <span id="selectedCount">已选 0 张</span>
+            <div class="selection-buttons">
+              <button id="confirmDeleteButton" type="button" class="danger">删除</button>
+              <button id="cancelDeleteButton" type="button">取消</button>
+            </div>
+          </div>
+        </div>
+        <div id="gallery" class="gallery columns-2" aria-live="polite"></div>
+      </aside>
+    </main>
+
+    <template id="captureTemplate">
+      <article class="capture-card">
+        <button class="select-toggle" type="button" aria-label="选择图片"></button>
+        <img alt="拍摄图片预览" draggable="true" />
+        <div class="capture-caption">
+          <strong class="capture-name"></strong>
+          <span class="capture-size"></span>
+        </div>
+      </article>
+    </template>
+
+    <dialog id="previewDialog" class="preview-dialog">
+      <div class="preview-shell">
+        <img id="previewImage" alt="放大预览" />
+        <button id="editPreviewButton" type="button">编辑</button>
+        <a id="downloadPreviewLink" href="#" download>下载</a>
+        <button id="closePreviewButton" type="button" aria-label="关闭预览">关闭</button>
+      </div>
+    </dialog>
+
+    <dialog id="editorDialog" class="editor-dialog">
+      <div class="editor-shell">
+        <div class="editor-topbar">
+          <div class="editor-tools" aria-label="编辑工具">
+            <button type="button" data-tool="crop" class="is-active">裁切</button>
+            <button type="button" data-tool="line">线</button>
+            <button type="button" data-tool="arrow">箭头</button>
+            <button type="button" data-tool="text">文本</button>
+            <button type="button" data-tool="eraser">橡皮</button>
+          </div>
+          <div class="editor-actions">
+            <span id="strokeText">线宽 4</span>
+            <button id="undoButton" type="button">撤销</button>
+            <button id="redoButton" type="button">重做</button>
+            <button id="saveEditButton" type="button" class="primary">完成/导出</button>
+            <button id="closeEditorButton" type="button">关闭</button>
+          </div>
+        </div>
+        <div class="editor-body">
+          <div class="canvas-wrap">
+            <canvas id="editorCanvas"></canvas>
+          </div>
+          <div class="color-palette" aria-label="颜色选择">
+            <button type="button" data-color="#e53935" style="--swatch: #e53935" class="is-active"></button>
+            <button type="button" data-color="#1e88e5" style="--swatch: #1e88e5"></button>
+            <button type="button" data-color="#43a047" style="--swatch: #43a047"></button>
+            <button type="button" data-color="#fdd835" style="--swatch: #fdd835"></button>
+            <button type="button" data-color="#111111" style="--swatch: #111111"></button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js?v=20260607-7" defer></script>
+  </body>
+</html>

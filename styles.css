@@ -1,0 +1,730 @@
+:root {
+  color-scheme: light;
+  font-family:
+    "Microsoft YaHei",
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+  --bg: #f5f7f4;
+  --panel: #ffffff;
+  --ink: #1e2528;
+  --muted: #667176;
+  --line: #d8dfda;
+  --accent: #1f7a6b;
+  --accent-strong: #14594e;
+  --danger: #a84242;
+  --shadow: 0 14px 34px rgb(32 45 48 / 11%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+button,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+button:hover,
+a:hover {
+  border-color: #a8b4ae;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--camera-pane-width, minmax(560px, 58vw)) 10px minmax(420px, 1fr);
+  gap: 10px;
+  height: 100vh;
+  min-height: 0;
+  padding: 16px;
+}
+
+.camera-pane,
+.gallery-pane {
+  min-height: 0;
+  min-width: 0;
+}
+
+.camera-pane {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.pane-splitter {
+  align-self: stretch;
+  border: 0;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, transparent 0 3px, rgb(102 113 118 / 34%) 3px 7px, transparent 7px);
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.pane-splitter:hover,
+.pane-splitter.is-dragging {
+  background:
+    linear-gradient(90deg, transparent 0 3px, var(--accent) 3px 7px, transparent 7px);
+}
+
+.topbar,
+.gallery-header {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.topbar {
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 230px;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, transparent 0 50%, rgb(31 122 107 / 15%) 50%),
+    #fff;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 17px;
+  line-height: 1.2;
+}
+
+p,
+.capture-size,
+.delete-actions span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.dot-separator {
+  color: #a4aca8;
+  padding: 0 5px;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, auto));
+  gap: 8px;
+  justify-content: stretch;
+  min-width: 0;
+}
+
+.toolbar select {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+}
+
+.toolbar button {
+  min-width: 0;
+}
+
+select {
+  width: 100%;
+  min-width: 170px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.toolbar button,
+.gallery-tools button,
+.delete-actions button {
+  min-height: 34px;
+  padding: 0 12px;
+}
+
+.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.primary:hover {
+  border-color: var(--accent-strong);
+  background: var(--accent-strong);
+}
+
+.danger {
+  border-color: rgb(168 66 66 / 42%);
+  color: var(--danger);
+}
+
+.shutdown-button {
+  border-color: rgb(168 66 66 / 72%);
+  border-radius: 999px;
+  color: var(--danger);
+  white-space: nowrap;
+}
+
+.shutdown-button:hover {
+  border-color: var(--danger);
+  background: rgb(168 66 66 / 7%);
+}
+
+.video-stage {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: min(48vh, 500px);
+  min-height: 280px;
+  border: 1px solid #cbd4ce;
+  border-radius: 8px;
+  padding: 0;
+  background: #111719;
+  box-shadow: var(--shadow);
+}
+
+.video-stage.is-zoomed {
+  cursor: grab;
+}
+
+.video-stage.is-panning {
+  cursor: grabbing;
+}
+
+body.camera-portrait .app-shell {
+  grid-template-columns: var(--camera-pane-width, minmax(360px, 34vw)) 10px minmax(560px, 1fr);
+}
+
+body.camera-portrait .video-stage {
+  justify-self: center;
+  min-height: 360px;
+}
+
+video {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #111719;
+  transform: translate(-50%, -50%) rotate(0deg);
+  transform-origin: center;
+}
+
+.zoom-indicator {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  min-width: 48px;
+  border: 1px solid rgb(255 255 255 / 38%);
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: rgb(17 23 25 / 72%);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.camera-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 24px;
+  background:
+    linear-gradient(135deg, rgb(20 89 78 / 82%), rgb(28 37 40 / 88%)),
+    #1f2a2d;
+  color: #fff;
+  text-align: center;
+}
+
+.camera-overlay.is-hidden {
+  display: none;
+}
+
+.camera-overlay strong {
+  font-size: 22px;
+}
+
+.camera-overlay span {
+  color: rgb(255 255 255 / 78%);
+  font-size: 13px;
+}
+
+.gallery-pane {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  height: calc(100vh - 32px);
+  min-height: 0;
+}
+
+.gallery-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 12px;
+  align-items: center;
+  padding: 14px;
+}
+
+.gallery-tools,
+.delete-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.delete-actions {
+  grid-column: 1 / -1;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.selection-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.delete-actions[hidden] {
+  display: none;
+}
+
+.segmented {
+  display: flex;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.segmented button {
+  min-width: 34px;
+  min-height: 32px;
+  border: 0;
+  border-radius: 0;
+  border-right: 1px solid var(--line);
+}
+
+.segmented button:last-child {
+  border-right: 0;
+}
+
+.segmented button.is-active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.gallery {
+  display: grid;
+  align-content: start;
+  align-items: start;
+  gap: 10px;
+  grid-auto-rows: max-content;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.gallery.columns-1 {
+  grid-template-columns: 1fr;
+}
+
+.gallery.columns-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gallery.columns-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gallery.columns-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.gallery:empty::before {
+  content: "拍摄后的图片会保存在 captures 文件夹，并出现在这里";
+  display: grid;
+  min-height: 160px;
+  grid-column: 1 / -1;
+  place-content: center;
+  border: 1px dashed #bfc9c3;
+  border-radius: 8px;
+  color: var(--muted);
+  background: rgb(255 255 255 / 58%);
+  text-align: center;
+}
+
+.capture-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto;
+  align-self: start;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 9px 22px rgb(32 45 48 / 8%);
+}
+
+.capture-card.is-selected {
+  outline: 3px solid rgb(31 122 107 / 38%);
+}
+
+.capture-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #101516;
+  cursor: grab;
+}
+
+.capture-card img:active {
+  cursor: grabbing;
+}
+
+.capture-caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 8px;
+}
+
+.capture-name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-toggle {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  z-index: 2;
+  display: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  padding: 0;
+  background: rgb(30 37 40 / 70%);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 22%);
+}
+
+.gallery.is-delete-mode .select-toggle {
+  display: block;
+}
+
+.capture-card.is-selected .select-toggle::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 7px;
+  height: 12px;
+  transform: rotate(45deg);
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+}
+
+.preview-dialog {
+  width: min(94vw, 1280px);
+  max-width: 94vw;
+  border: 0;
+  border-radius: 8px;
+  padding: 0;
+  background: transparent;
+}
+
+.preview-dialog::backdrop {
+  background: rgb(0 0 0 / 72%);
+}
+
+.preview-shell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+}
+
+.preview-shell img {
+  max-width: 100%;
+  max-height: 88vh;
+  border-radius: 8px;
+  background: #101516;
+  box-shadow: 0 18px 54px rgb(0 0 0 / 35%);
+}
+
+.preview-shell button,
+.preview-shell a {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-content: center;
+  min-height: 34px;
+  padding: 0 12px;
+}
+
+.preview-shell a {
+  right: 70px;
+}
+
+#editPreviewButton {
+  right: 132px;
+}
+
+.editor-dialog {
+  width: min(96vw, 1500px);
+  max-width: 96vw;
+  height: min(94vh, 980px);
+  border: 0;
+  border-radius: 8px;
+  padding: 0;
+  background: var(--panel);
+}
+
+.editor-dialog::backdrop {
+  background: rgb(0 0 0 / 72%);
+}
+
+.editor-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+}
+
+.editor-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid var(--line);
+  padding: 12px;
+}
+
+.editor-tools,
+.editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-tools button,
+.editor-actions button {
+  min-height: 36px;
+  padding: 0 14px;
+}
+
+.editor-tools button.is-active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+#strokeText {
+  min-width: 64px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: right;
+}
+
+.editor-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  gap: 12px;
+  min-height: 0;
+  padding: 12px;
+  background: #eef2ef;
+}
+
+.canvas-wrap {
+  display: grid;
+  min-height: 0;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #202729;
+}
+
+#editorCanvas {
+  display: block;
+  background: #fff;
+  cursor: crosshair;
+}
+
+.color-palette {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--panel);
+}
+
+.color-palette button {
+  width: 40px;
+  height: 40px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  padding: 0;
+  background: var(--swatch);
+}
+
+.color-palette button.is-active {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px #fff inset;
+}
+
+.toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 5;
+  max-width: min(360px, calc(100vw - 36px));
+  transform: translateY(18px);
+  border: 1px solid rgb(20 89 78 / 28%);
+  border-radius: 8px;
+  padding: 10px 13px;
+  background: #fff;
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.toast.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+@media (max-width: 1180px) {
+  body {
+    overflow: auto;
+  }
+
+  .app-shell {
+    height: auto;
+    min-height: 100vh;
+    grid-template-columns: 1fr;
+  }
+
+  .pane-splitter {
+    display: none;
+  }
+
+  .gallery-pane {
+    height: auto;
+    max-height: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .app-shell {
+    padding: 10px;
+  }
+
+  .topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .video-stage {
+    height: 320px;
+    min-height: 240px;
+  }
+
+  .gallery.columns-2,
+  .gallery.columns-3,
+  .gallery.columns-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .editor-topbar,
+  .editor-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .editor-body {
+    grid-template-columns: 1fr;
+  }
+
+  .color-palette {
+    grid-template-columns: repeat(5, 40px);
+  }
+}

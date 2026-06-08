@@ -1,0 +1,63 @@
+# Dependencies and package-manager state
+node_modules/
+.npm/
+.pnpm-store/
+
+# Runtime output and local captures
+captures/
+pdf_pages/
+*.pdf
+*.log
+logs/
+
+# Screenshots and image exports
+screenshots/
+screenshots-*/
+screenshot*
+screen-shot*
+*.screenshot.*
+*.screen.png
+*.screen.jpg
+
+# Archives and backups
+*.7z
+*.bz2
+*.gz
+*.rar
+*.tar
+*.tgz
+*.zip
+*.bak
+*.backup
+*.tmp
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+credentials*.json
+secrets*.json
+
+# Private agent and editor files
+AGENTS.md
+.codex/
+.vscode/
+.idea/
+*.code-workspace
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Test and coverage output
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
