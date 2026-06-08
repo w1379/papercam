@@ -55,16 +55,17 @@ let deleteMode = false;
 let selectedIds = new Set();
 let toastTimer = 0;
 let cameraRotation = Number(localStorage.getItem(storageKeys.cameraRotation) || 0);
-let previewZoom = 1;
+let previewZoom = 1.5;
 let previewCenter = { x: 0.5, y: 0.5 };
 let previewPan = null;
 let cameraSelectionTouched = false;
-let cameraMode = "1080";
+let cameraMode = "2k";
 let splitterDrag = null;
 const cameraModes = {
   "1080": { label: "1080p", width: 1920, height: 1080 },
   "2k": { label: "2K", width: 2560, height: 1440 },
-  "4k": { label: "4K", width: 3840, height: 2160 },
+  "3264": { label: "3264 x 2448", width: 3264, height: 2448 },
+  "2592": { label: "2592 x 1944", width: 2592, height: 1944 },
 };
 const dragFileObserver = new IntersectionObserver((entries) => {
   for (const entry of entries) {
@@ -227,6 +228,33 @@ async function startCamera() {
   }
 }
 
+async function refocusCamera() {
+  const track = stream?.getVideoTracks()[0];
+  if (!track || track.readyState !== "live") {
+    await startCamera();
+    return;
+  }
+
+  const capabilities = track.getCapabilities?.() || {};
+  const focusModes = capabilities.focusMode || [];
+  if (!focusModes.includes("manual") || !focusModes.includes("continuous")) {
+    showToast("当前摄像头不支持网页重新对焦");
+    return;
+  }
+
+  try {
+    const currentDistance = track.getSettings?.().focusDistance;
+    const manualFocus = { focusMode: "manual" };
+    if (Number.isFinite(currentDistance)) manualFocus.focusDistance = currentDistance;
+    await track.applyConstraints({ advanced: [manualFocus] });
+    await track.applyConstraints({ advanced: [{ focusMode: "continuous" }] });
+    showToast("正在重新对焦");
+  } catch (error) {
+    console.error(error);
+    showToast("重新对焦失败");
+  }
+}
+
 function updateResolution() {
   const width = els.video.videoWidth;
   const height = els.video.videoHeight;
@@ -326,12 +354,16 @@ function clampPreviewCenter() {
   previewCenter.y = Math.min(1 - halfVisible, Math.max(halfVisible, previewCenter.y));
 }
 
-function adjustPreviewZoom(delta) {
-  previewZoom = Math.min(4, Math.max(1, Math.round((previewZoom + delta) * 10) / 10));
+function setPreviewZoom(zoom) {
+  previewZoom = Math.min(4, Math.max(1, Math.round(zoom * 10) / 10));
   clampPreviewCenter();
   els.zoomIndicator.textContent = `${previewZoom.toFixed(1)}×`;
   els.videoButton.classList.toggle("is-zoomed", previewZoom > 1);
   updateVideoRotation();
+}
+
+function adjustPreviewZoom(delta) {
+  setPreviewZoom(previewZoom + delta);
 }
 
 function movePreviewCenter(deltaX, deltaY) {
@@ -1228,7 +1260,7 @@ function adjustElementSize(element, delta) {
   renderEditor();
 }
 
-els.startButton.addEventListener("click", startCamera);
+els.startButton.addEventListener("click", refocusCamera);
 els.captureButton.addEventListener("click", captureFrame);
 els.videoButton.addEventListener("click", captureFrame);
 els.cameraSelect.addEventListener("change", () => {
@@ -1241,11 +1273,12 @@ els.videoButton.addEventListener("wheel", (event) => {
 }, { passive: false });
 window.addEventListener("keydown", (event) => {
   if (!els.videoButton.matches(":hover") || event.ctrlKey || event.altKey || event.metaKey) return;
-  const modeByKey = { "1": "1080", "2": "2k", "3": "4k" };
+  const modeByKey = { "1": "1080", "2": "2k", "3": "2592", "4": "3264" };
   const nextMode = modeByKey[event.key];
   if (!nextMode) return;
   event.preventDefault();
   cameraMode = nextMode;
+  setPreviewZoom(event.key === "1" || event.key === "2" ? 1.5 : 1.8);
   showToast(`正在切换到 ${cameraModes[cameraMode].label}`);
   startCamera();
 });

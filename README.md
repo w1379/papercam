@@ -4,7 +4,9 @@ PaperCam is a small, dependency-free local web application for capturing paper d
 
 ## Features
 
-- Selects an available camera and supports 1080p, 2K, and 4K capture modes
+- Selects an available camera and supports 1080p, 2K, 2592 x 1944, and 3264 x 2448 capture modes
+- Starts in 2K mode with a 1.5x preview zoom
+- Provides a camera refocus control when supported by the device
 - Rotates and zooms the live preview
 - Saves captures as numbered PNG files in a local `captures` directory
 - Displays, downloads, copies, drags, and deletes saved captures
@@ -44,7 +46,8 @@ The application creates `captures/` automatically. Captured and edited images re
 
 - Use the camera selector to switch devices.
 - Click the preview or the capture button to take a photo.
-- Press `1`, `2`, or `3` while the preview is active to request 1080p, 2K, or 4K.
+- Press `1`, `2`, `3`, or `4` while the preview is active to request 1080p, 2K, 2592 x 1944, or 3264 x 2448.
+- Use the refocus button to restart continuous focus on compatible cameras.
 - Use the mouse wheel over the preview to zoom.
 - Middle-drag a zoomed preview to reposition it.
 - Use the rotate buttons to rotate the camera view.
@@ -58,4 +61,3 @@ PaperCam binds only to `127.0.0.1`. Camera frames and captured images are proces
 ## Repository Notes
 
 This repository contains a clean source snapshot without the history or private working files from the original development repository.
-
