@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const http = require("node:http");
+const { spawn } = require("node:child_process");
 const { URL } = require("node:url");
 
 const PORT = Number(process.env.PORT || 5173);
@@ -188,6 +189,51 @@ async function handleApi(request, response, url) {
       fs.unlinkSync(filePath);
     }
     sendJson(response, 200, { ok: true });
+    return true;
+  }
+
+  if (request.method === "POST" && url.pathname === "/api/open-captures-folder") {
+    const escapedCaptureDir = CAPTURE_DIR.replaceAll("'", "''");
+    const command = [
+      `$capturePath = '${escapedCaptureDir}'`,
+      "$shell = New-Object -ComObject Shell.Application",
+      "$findWindow = { @($shell.Windows() | Where-Object { try { $_.Document.Folder.Self.Path -eq $capturePath } catch { $false } })[0] }",
+      "$folderWindow = & $findWindow",
+      "if (-not $folderWindow) { Start-Process -FilePath 'explorer.exe' -ArgumentList $capturePath }",
+      "for ($attempt = 0; -not $folderWindow -and $attempt -lt 12; $attempt += 1) { Start-Sleep -Milliseconds 100; $folderWindow = & $findWindow }",
+      "if (-not $folderWindow) { exit 1 }",
+      "Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; public static class ExplorerWindowFocus { [DllImport(\"user32.dll\")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow); [DllImport(\"user32.dll\")] public static extern bool BringWindowToTop(IntPtr hWnd); [DllImport(\"user32.dll\")] public static extern bool SetForegroundWindow(IntPtr hWnd); [DllImport(\"user32.dll\")] public static extern void SwitchToThisWindow(IntPtr hWnd, bool altTab); [DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow(); [DllImport(\"user32.dll\")] public static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo); }'",
+      "$hwnd = [IntPtr][long]$folderWindow.HWND",
+      "[void][ExplorerWindowFocus]::ShowWindowAsync($hwnd, 9)",
+      "[ExplorerWindowFocus]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero)",
+      "[ExplorerWindowFocus]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)",
+      "[void][ExplorerWindowFocus]::BringWindowToTop($hwnd)",
+      "[void][ExplorerWindowFocus]::SetForegroundWindow($hwnd)",
+      "[ExplorerWindowFocus]::SwitchToThisWindow($hwnd, $true)",
+      "Start-Sleep -Milliseconds 150",
+      "if ([ExplorerWindowFocus]::GetForegroundWindow() -ne $hwnd) { exit 2 }",
+    ].join("; ");
+    const opener = spawn("powershell.exe", [
+      "-NoProfile",
+      "-NonInteractive",
+      "-WindowStyle",
+      "Hidden",
+      "-Command",
+      command,
+    ], {
+      stdio: "ignore",
+      windowsHide: true,
+    });
+    opener.once("close", (code) => {
+      if (code === 0) {
+        sendJson(response, 200, { ok: true });
+        return;
+      }
+      sendText(response, 500, `Could not activate captures folder (exit ${code})`);
+    });
+    opener.once("error", (error) => {
+      sendText(response, 500, error.message);
+    });
     return true;
   }
 

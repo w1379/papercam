@@ -10,6 +10,7 @@ const els = {
   rotateRightButton: document.querySelector("#rotateRightButton"),
   startButton: document.querySelector("#startButton"),
   captureButton: document.querySelector("#captureButton"),
+  openFolderButton: document.querySelector("#openFolderButton"),
   deleteModeButton: document.querySelector("#deleteModeButton"),
   shutdownButton: document.querySelector("#shutdownButton"),
   deleteActions: document.querySelector("#deleteActions"),
@@ -614,6 +615,20 @@ async function shutdownServer() {
     console.error(error);
     els.shutdownButton.disabled = false;
     showToast("关闭失败，请稍后重试");
+  }
+}
+
+async function openCaptureFolder() {
+  els.openFolderButton.disabled = true;
+  try {
+    const response = await fetch("/api/open-captures-folder", { method: "POST" });
+    if (!response.ok) throw new Error(await response.text());
+    showToast("已打开 captures 文件夹");
+  } catch (error) {
+    console.error(error);
+    showToast("打开文件夹失败");
+  } finally {
+    els.openFolderButton.disabled = false;
   }
 }
 
@@ -1304,6 +1319,7 @@ els.videoButton.addEventListener("pointerup", stopPreviewPan);
 els.videoButton.addEventListener("pointercancel", stopPreviewPan);
 els.rotateLeftButton.addEventListener("click", () => rotateCamera(-90));
 els.rotateRightButton.addEventListener("click", () => rotateCamera(90));
+els.openFolderButton.addEventListener("click", openCaptureFolder);
 els.deleteModeButton.addEventListener("click", () => setDeleteMode(true));
 els.cancelDeleteButton.addEventListener("click", () => setDeleteMode(false));
 els.confirmDeleteButton.addEventListener("click", confirmDeleteSelected);

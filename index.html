@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Camera Capture Desk</title>
-    <link rel="stylesheet" href="./styles.css?v=20260608-1" />
+    <link rel="stylesheet" href="./styles.css?v=20260611-1" />
   </head>
   <body>
     <main class="app-shell">
@@ -49,6 +49,7 @@
             <p id="latestText">尚无图片</p>
           </div>
           <div class="gallery-tools">
+            <button id="openFolderButton" type="button" class="folder-button">打开文件夹</button>
             <div class="segmented" aria-label="预览列数">
               <button type="button" data-columns="1">1</button>
               <button type="button" data-columns="2" class="is-active">2</button>
@@ -124,6 +125,6 @@
     </dialog>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script src="./app.js?v=20260607-7" defer></script>
+    <script src="./app.js?v=20260611-1" defer></script>
   </body>
 </html>

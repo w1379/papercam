@@ -206,6 +206,10 @@ select {
   color: var(--danger);
 }
 
+.folder-button {
+  border-radius: 999px;
+}
+
 .shutdown-button {
   border-color: rgb(168 66 66 / 72%);
   border-radius: 999px;
