@@ -6,6 +6,7 @@ const els = {
   splitter: document.querySelector("#paneSplitter"),
   overlay: document.querySelector("#cameraOverlay"),
   cameraSelect: document.querySelector("#cameraSelect"),
+  resolutionSelect: document.querySelector("#resolutionSelect"),
   rotateLeftButton: document.querySelector("#rotateLeftButton"),
   rotateRightButton: document.querySelector("#rotateRightButton"),
   startButton: document.querySelector("#startButton"),
@@ -13,6 +14,7 @@ const els = {
   openFolderButton: document.querySelector("#openFolderButton"),
   deleteModeButton: document.querySelector("#deleteModeButton"),
   shutdownButton: document.querySelector("#shutdownButton"),
+  themeToggleButton: document.querySelector("#themeToggleButton"),
   deleteActions: document.querySelector("#deleteActions"),
   confirmDeleteButton: document.querySelector("#confirmDeleteButton"),
   cancelDeleteButton: document.querySelector("#cancelDeleteButton"),
@@ -47,6 +49,7 @@ const storageKeys = {
   cameraRotation: "captureDesk.cameraRotation",
   cameraPaneWidth: "captureDesk.cameraPaneWidth",
   galleryColumns: "captureDesk.galleryColumns",
+  theme: "captureDesk.theme",
 };
 
 let stream = null;
@@ -367,6 +370,15 @@ function adjustPreviewZoom(delta) {
   setPreviewZoom(previewZoom + delta);
 }
 
+function selectCameraMode(mode) {
+  if (!cameraModes[mode]) return;
+  cameraMode = mode;
+  els.resolutionSelect.value = mode;
+  setPreviewZoom(mode === "1080" || mode === "2k" ? 1.5 : 1.8);
+  showToast(`正在切换到 ${cameraModes[mode].label}`);
+  startCamera();
+}
+
 function movePreviewCenter(deltaX, deltaY) {
   const radians = (cameraRotation * Math.PI) / 180;
   const localX = Math.cos(radians) * deltaX + Math.sin(radians) * deltaY;
@@ -616,6 +628,18 @@ async function shutdownServer() {
     els.shutdownButton.disabled = false;
     showToast("关闭失败，请稍后重试");
   }
+}
+
+function setTheme(theme, persist = true) {
+  const isDark = theme !== "light";
+  document.body.classList.toggle("theme-dark", isDark);
+  els.themeToggleButton.setAttribute("aria-label", isDark ? "切换为浅色模式" : "切换为深色模式");
+  els.themeToggleButton.title = isDark ? "切换为浅色模式" : "切换为深色模式";
+  if (persist) localStorage.setItem(storageKeys.theme, isDark ? "dark" : "light");
+}
+
+function toggleTheme() {
+  setTheme(document.body.classList.contains("theme-dark") ? "light" : "dark");
 }
 
 async function openCaptureFolder() {
@@ -1282,6 +1306,9 @@ els.cameraSelect.addEventListener("change", () => {
   cameraSelectionTouched = true;
   startCamera();
 });
+els.resolutionSelect.addEventListener("change", () => {
+  selectCameraMode(els.resolutionSelect.value);
+});
 els.videoButton.addEventListener("wheel", (event) => {
   event.preventDefault();
   adjustPreviewZoom(event.deltaY < 0 ? 0.1 : -0.1);
@@ -1292,10 +1319,7 @@ window.addEventListener("keydown", (event) => {
   const nextMode = modeByKey[event.key];
   if (!nextMode) return;
   event.preventDefault();
-  cameraMode = nextMode;
-  setPreviewZoom(event.key === "1" || event.key === "2" ? 1.5 : 1.8);
-  showToast(`正在切换到 ${cameraModes[cameraMode].label}`);
-  startCamera();
+  selectCameraMode(nextMode);
 });
 els.videoButton.addEventListener("pointerdown", (event) => {
   if (event.button !== 1 || previewZoom <= 1) return;
@@ -1324,6 +1348,7 @@ els.deleteModeButton.addEventListener("click", () => setDeleteMode(true));
 els.cancelDeleteButton.addEventListener("click", () => setDeleteMode(false));
 els.confirmDeleteButton.addEventListener("click", confirmDeleteSelected);
 els.shutdownButton.addEventListener("click", shutdownServer);
+els.themeToggleButton.addEventListener("click", toggleTheme);
 els.video.addEventListener("loadedmetadata", updateResolution);
 
 els.splitter.addEventListener("pointerdown", (event) => {
@@ -1506,6 +1531,8 @@ window.addEventListener("resize", () => {
 window.addEventListener("beforeunload", stopStream);
 
 restoreCameraPaneWidth();
+setTheme(localStorage.getItem(storageKeys.theme) || "dark", false);
+els.resolutionSelect.value = cameraMode;
 setGalleryColumns(localStorage.getItem(storageKeys.galleryColumns) || "2", false);
 updateVideoRotation();
 setColor(editor.color);

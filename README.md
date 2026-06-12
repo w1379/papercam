@@ -10,10 +10,11 @@ PaperCam runs entirely on your Windows PC. It shows a live camera view, saves ph
 
 ## What It Does
 
-- Live document-camera preview with zoom, rotation, and refocus
+- Live document-camera preview with zoom, rotation, refocus, and resolution selection
 - One-click capture to numbered PNG files
 - Built-in gallery for viewing, downloading, dragging, and deleting images
 - Opens the local captures folder directly from the app
+- Persistent light and dark themes
 - Simple crop, line, arrow, and text tools
 - No cloud service and no external dependencies
 

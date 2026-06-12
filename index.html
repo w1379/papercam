@@ -4,28 +4,52 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Camera Capture Desk</title>
-    <link rel="stylesheet" href="./styles.css?v=20260611-1" />
+    <link rel="stylesheet" href="./styles.css?v=20260612-1" />
   </head>
-  <body>
+  <body class="theme-dark">
     <main class="app-shell">
       <section class="camera-pane" aria-label="摄像头采集">
         <div class="topbar">
-          <div class="brand">
-            <span class="brand-mark"></span>
-            <div>
-              <h1>Capture Desk</h1>
-              <p>
-                <span id="statusText">正在准备摄像头</span>
-                <span class="dot-separator">/</span>
-                <span id="resolutionText">--</span>
-              </p>
+          <div class="brand-row">
+            <div class="brand">
+              <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M14.5 4 16 7h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h3l1.5-3z"></path>
+                  <circle cx="12" cy="13" r="3"></circle>
+                </svg>
+              </span>
+              <div>
+                <h1>Capture Desk</h1>
+                <p>
+                  <span id="statusText">正在准备摄像头</span>
+                  <span class="dot-separator">/</span>
+                  <span id="resolutionText">--</span>
+                </p>
+              </div>
             </div>
+            <button id="themeToggleButton" type="button" class="theme-toggle" aria-label="切换为浅色模式" title="切换为浅色模式">
+              <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"></path>
+              </svg>
+              <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path>
+              </svg>
+            </button>
           </div>
           <div class="toolbar">
-            <select id="cameraSelect" aria-label="选择摄像头"></select>
+            <div class="toolbar-selects">
+              <select id="cameraSelect" aria-label="选择摄像头"></select>
+              <select id="resolutionSelect" aria-label="选择分辨率">
+                <option value="1080">1920 × 1080</option>
+                <option value="2k" selected>2560 × 1440</option>
+                <option value="2592">2592 × 1944</option>
+                <option value="3264">3264 × 2448</option>
+              </select>
+            </div>
             <button id="rotateLeftButton" type="button" title="向左旋转 90 度">左转</button>
             <button id="rotateRightButton" type="button" title="向右旋转 90 度">右转</button>
-            <button id="startButton" type="button">重新对焦</button>
+            <button id="startButton" type="button">对焦</button>
             <button id="captureButton" type="button" class="primary">拍照</button>
           </div>
         </div>
@@ -125,6 +149,6 @@
     </dialog>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script src="./app.js?v=20260611-1" defer></script>
+    <script src="./app.js?v=20260612-2" defer></script>
   </body>
 </html>
