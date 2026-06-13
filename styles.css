@@ -339,8 +339,9 @@ body.theme-dark .theme-icon-moon {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  height: min(48vh, 500px);
-  min-height: 280px;
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
   border: 1px solid var(--video-line);
   border-radius: 8px;
   padding: 0;

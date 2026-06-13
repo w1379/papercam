@@ -334,8 +334,22 @@ function updateVideoRotation() {
     els.videoButton.style.height = `${Math.floor(stageHeight)}px`;
   } else {
     document.body.classList.remove("camera-portrait");
-    els.videoButton.style.width = "";
-    els.videoButton.style.height = "";
+    const paneWidth = Math.max(1, els.videoButton.parentElement.clientWidth);
+    const sourceWidth = els.video.videoWidth || cameraModes[cameraMode].width;
+    const sourceHeight = els.video.videoHeight || cameraModes[cameraMode].height;
+    const aspectRatio = sourceWidth / Math.max(1, sourceHeight);
+    const stageTop = els.videoButton.getBoundingClientRect().top;
+    const maxStageHeight = Math.max(240, window.innerHeight - stageTop - 16);
+    let stageWidth = paneWidth;
+    let stageHeight = stageWidth / aspectRatio;
+
+    if (stageHeight > maxStageHeight) {
+      stageHeight = maxStageHeight;
+      stageWidth = stageHeight * aspectRatio;
+    }
+
+    els.videoButton.style.width = `${Math.floor(stageWidth)}px`;
+    els.videoButton.style.height = `${Math.floor(stageHeight)}px`;
   }
 
   const stage = els.videoButton.getBoundingClientRect();
